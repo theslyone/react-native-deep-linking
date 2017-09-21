@@ -206,4 +206,19 @@ describe('Routes', () => {
     DeepLinking.evaluateUrl('domain://videos/123/details');
     expect(urlEvaluated).toEqual(false);
   });
+
+  test('domain://pay/:redirectDomain/:amount', () => {
+    let urlEvaluated = false;
+    DeepLinking.addRoute('/:anotherdomain/:amount', (result) => {
+      const { path, scheme, redirectDomain, amount } = result;
+      expect(path).toEqual('/pay?redirectDomain=anotherdomain&amount=150');
+      expect(scheme).toEqual('domain://');
+      expect(redirectDomain).toEqual('anotherdomain');
+      expect(amount).toEqual('150');
+      urlEvaluated = true;
+    });
+
+    DeepLinking.evaluateUrl('domain://pay?redirectDomain=anotherdomain&amount=150');
+    expect(urlEvaluated).toEqual(true);
+  });
 });

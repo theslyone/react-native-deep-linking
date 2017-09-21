@@ -1,6 +1,19 @@
 const schemes = [];
 const routes = [];
 
+const parseQuery = (qstr) => {
+    var query = {
+      path: qstr
+    };
+    qstr = qstr.match(/(\?.*)/)[1];
+    var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
+    for (var i = 0; i < a.length; i++) {
+        var b = a[i].split('=');
+        query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+    }
+    return query;
+};
+
 const fetchQueries = (expression) => {
   const regex = /:([^/]*)/g;
   const queries = [];
@@ -34,6 +47,9 @@ const execRegex = (queries, expression, path) => {
     });
 
     return results;
+  } else if (path.includes('?')){
+    let query = parseQuery(path);
+    return query;
   }
 
   return false;
